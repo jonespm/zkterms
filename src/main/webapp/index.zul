@@ -1,32 +1,32 @@
 <window title="Terms" border="normal">
     <zscript>
     <![CDATA[
-	import org.sakaiproject.component.cover.ComponentManager;
-	import org.sakaiproject.coursemanagement.api.*;
-	import org.springframework.context.ApplicationContext;
-	import java.util.*;
-	import java.lang.*;
-	import java.lang.reflect.*;
+    import org.sakaiproject.component.cover.ComponentManager;
+    import org.sakaiproject.coursemanagement.api.*;
+    import org.springframework.context.ApplicationContext;
+    import java.util.*;
+    import java.lang.*;
+    import java.lang.reflect.*;
 
-	import org.sakaiproject.coursemanagement.impl.*;
+    import org.sakaiproject.coursemanagement.impl.*;
 
-	import org.sakaiproject.authz.cover.AuthzGroupService;
-	import org.sakaiproject.event.cover.EventTrackingService;
-	import org.sakaiproject.event.cover.UsageSessionService;
-	import org.sakaiproject.tool.api.Session;
-	import org.sakaiproject.tool.cover.SessionManager;
-	import org.sakaiproject.user.cover.UserDirectoryService;
-	import org.sakaiproject.user.api.*;
-	import org.sakaiproject.tool.api.*;
+    import org.sakaiproject.authz.cover.AuthzGroupService;
+    import org.sakaiproject.event.cover.EventTrackingService;
+    import org.sakaiproject.event.cover.UsageSessionService;
+    import org.sakaiproject.tool.api.Session;
+    import org.sakaiproject.tool.cover.SessionManager;
+    import org.sakaiproject.user.cover.UserDirectoryService;
+    import org.sakaiproject.user.api.*;
+    import org.sakaiproject.tool.api.*;
 
         public CourseManagementService cms = (CourseManagementService) ComponentManager.get(CourseManagementService.class);
-	public UserDirectoryService userDirectoryService = (UserDirectoryService) ComponentManager.get(UserDirectoryService.class);
-	public CourseManagementAdministration cmAdmin = (CourseManagementAdministration) ComponentManager.get(CourseManagementAdministration.class);
+    public UserDirectoryService userDirectoryService = (UserDirectoryService) ComponentManager.get(UserDirectoryService.class);
+    public CourseManagementAdministration cmAdmin = (CourseManagementAdministration) ComponentManager.get(CourseManagementAdministration.class);
 
-	Session sakaiSession;
+    Session sakaiSession;
 
-	String lastComboValue;
-	String lastlastComboValue;
+    String lastComboValue;
+    String lastlastComboValue;
 
   static String dump( Object o ) {
     StringBuffer buffer = new StringBuffer();
@@ -51,181 +51,181 @@
     return buffer.toString();
   }
 
-	//I can't see to get to the cmAdmin service, so I'll copy the code out
+    //I can't see to get to the cmAdmin service, so I'll copy the code out
         protected void loginToSakai() {
-	    sakaiSession = SessionManager.getCurrentSession(); 
-	    
-	    //Messagebox.show(sakaiSession.getUserId(), "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
-	    if (sakaiSession != null) {
-		sakaiSession.setUserId("admin");
-		sakaiSession.setUserEid("admin");
+        sakaiSession = SessionManager.getCurrentSession(); 
+        
+        //Messagebox.show(sakaiSession.getUserId(), "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
+        if (sakaiSession != null) {
+        sakaiSession.setUserId("admin");
+        sakaiSession.setUserEid("admin");
 
-//		establish the user's session
-		UsageSessionService.startSession("admin", "127.0.0.1", "termsManager");
+//      establish the user's session
+        UsageSessionService.startSession("admin", "127.0.0.1", "termsManager");
 
-		// update the user's externally provided realm definitions
-		AuthzGroupService.refreshUser("admin");
-		// post the login event
-		    
-		EventTrackingService.post(EventTrackingService.newEvent(UsageSessionService.EVENT_LOGIN, null, true));
-	    }
-	    else {
-		Messagebox.show("Session was not defined :(", "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
-	    }
+        // update the user's externally provided realm definitions
+        AuthzGroupService.refreshUser("admin");
+        // post the login event
+            
+        EventTrackingService.post(EventTrackingService.newEvent(UsageSessionService.EVENT_LOGIN, null, true));
+        }
+        else {
+        Messagebox.show("Session was not defined :(", "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
+        }
         }
 
         protected void logoutFromSakai() {
             // post the logout event
-	    EventTrackingService.post(EventTrackingService.newEvent(UsageSessionService.EVENT_LOGOUT, null, true));
+        EventTrackingService.post(EventTrackingService.newEvent(UsageSessionService.EVENT_LOGOUT, null, true));
         }
 
-	public void doInit() {
-//	    authn.getUserEid();
-	    populateTerms();
-	}
+    public void doInit() {
+//      authn.getUserEid();
+        populateTerms();
+    }
 
-	public void populateTerms() {
-	    List terms = getTermList(false);
-	    termbox.getItems().clear();
-	    if (terms != null) {
-		for (AcademicSession term:terms)  {
-		    Listitem item = termbox.appendItem(term.title, term.eid);
-//		    item.setValue(term.eid);
-//		    item.setDescription(term.eid);
-		}
-	    }
-	}
+    public void populateTerms() {
+        List terms = getTermList(false);
+        termbox.getItems().clear();
+        if (terms != null) {
+        for (AcademicSession term:terms)  {
+            Listitem item = termbox.appendItem(term.title, term.eid);
+//          item.setValue(term.eid);
+//          item.setDescription(term.eid);
+        }
+        }
+    }
 
-	List getTermList(boolean upcomingOnly) {
-	    if (upcomingOnly == null)
-		upcomingOnly = false;
-	    List terms;
-	    if (upcomingOnly) {
-		terms = cms != null?cms.getCurrentAcademicSessions():null;
-	    } else { // get all
-		terms = cms != null?cms.getAcademicSessions():null;
-	    }
-	    if (terms != null && terms.size() > 0) {
-		return terms;
-	    }
-	    return null;
-	} // setTermListForContext
+    List getTermList(boolean upcomingOnly) {
+        if (upcomingOnly == null)
+        upcomingOnly = false;
+        List terms;
+        if (upcomingOnly) {
+        terms = cms != null?cms.getCurrentAcademicSessions():null;
+        } else { // get all
+        terms = cms != null?cms.getAcademicSessions():null;
+        }
+        if (terms != null && terms.size() > 0) {
+        return terms;
+        }
+        return null;
+    } // setTermListForContext
 
-	public void onTimer() {
+    public void onTimer() {
 
 
-	}
+    }
 
 /*
-	public void trackLastCombo() {
-	    //Keep track of the last value in the combobox account for first case
-	    String termname = termbox.getSelectedItem().getValue();
-	    if (lastComboValue != null) {
-		lastlastComboValue = lastComboValue;
-	    }
-	    else {
-		lastlastComboValue = termname;
-	    }
-	    lastComboValue = termname;
-	}
+    public void trackLastCombo() {
+        //Keep track of the last value in the combobox account for first case
+        String termname = termbox.getSelectedItem().getValue();
+        if (lastComboValue != null) {
+        lastlastComboValue = lastComboValue;
+        }
+        else {
+        lastlastComboValue = termname;
+        }
+        lastComboValue = termname;
+    }
 */
-	public void termChanged () {
-	    AcademicSession as = null;
-	    termname = termbox.getSelectedItem().getValue();
-//	    trackLastCombo();
-	    as = cms.getAcademicSession(termname);
-	    if (as != null) {
-	        startdate.setValue(as.getStartDate());
-	        enddate.setValue(as.getEndDate());
-		newname.setValue(as.getTitle());
-	    }
-	}
+    public void termChanged () {
+        AcademicSession as = null;
+        termname = termbox.getSelectedItem().getValue();
+//      trackLastCombo();
+        as = cms.getAcademicSession(termname);
+        if (as != null) {
+            startdate.setValue(as.getStartDate());
+            enddate.setValue(as.getEndDate());
+        newname.setValue(as.getTitle());
+        }
+    }
 
-	public void termUpdate() {
-	    loginToSakai();
-	    AcademicSession as = null;
-	    newtermname = newname.getValue(); 
-	    oldtermname = termbox.getSelectedItem().getValue();
-	    if (oldtermname != null) {
-		as = cms.getAcademicSession(oldtermname);
-	    }
-	    if (as != null && cmAdmin != null) {
-		Date startdate = startdate.getValue();
-		Date enddate = enddate.getValue();
-		if (startdate != null && enddate != null && newtermname != null ) {
-//		    Messagebox.show(dump(as), "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
-		    as.setTitle(newtermname);
-		    as.setDescription(newtermname);
-		    as.setStartDate(startdate);
-		    as.setEndDate(enddate);
-//		    Messagebox.show(as.getEid(), "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
-		    try {
-		        cmAdmin.updateAcademicSession(as);
-		    }
-		    catch (Exception e) {
-			Messagebox.show(e.toString(), "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
-		    }
-		    finally {
-			populateTerms();
-		    }
-		}	
-	    
-	    }
-	    else {
-		    Messagebox.show("Could not get academic session or CMAdmin", "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
-	    }
+    public void termUpdate() {
+        loginToSakai();
+        AcademicSession as = null;
+        newtermname = newname.getValue(); 
+        oldtermname = termbox.getSelectedItem().getValue();
+        if (oldtermname != null) {
+        as = cms.getAcademicSession(oldtermname);
+        }
+        if (as != null && cmAdmin != null) {
+        Date startdate = startdate.getValue();
+        Date enddate = enddate.getValue();
+        if (startdate != null && enddate != null && newtermname != null ) {
+//          Messagebox.show(dump(as), "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
+            as.setTitle(newtermname);
+            as.setDescription(newtermname);
+            as.setStartDate(startdate);
+            as.setEndDate(enddate);
+//          Messagebox.show(as.getEid(), "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
+            try {
+                cmAdmin.updateAcademicSession(as);
+            }
+            catch (Exception e) {
+            Messagebox.show(e.toString(), "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
+            }
+            finally {
+            populateTerms();
+            }
+        }   
+        
+        }
+        else {
+            Messagebox.show("Could not get academic session or CMAdmin", "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
+        }
 
-	}
+    }
 
-	public void termAdd() {
-	    loginToSakai();
+    public void termAdd() {
+        loginToSakai();
 
-	    Date startdate = addstartdate.getValue();
-	    Date enddate = addenddate.getValue();
-	    String termname = addtermname.getValue();
-		
-	    Messagebox.show("Creating academic session "+termname, "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
-	    
-	    if (cmAdmin != null) {
-		if (startdate != null && enddate != null && termname != null ) {
-		    try {
-			//cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
-			cmAdmin.createAcademicSession(termname,termname,termname,startdate,enddate);
-		    }
-		    catch (Exception e) {
-			Messagebox.show(e.toString(), "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
-		    }
-		    finally {
-			populateTerms();
-		    }
-		}
-		else {
-		    Messagebox.show("Please enter all field values!", "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
-		}
-	    }
-	    else {
-		Messagebox.show("cmAdmin is not defined", "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
-	    }
-	}
+        Date startdate = addstartdate.getValue();
+        Date enddate = addenddate.getValue();
+        String termname = addtermname.getValue();
+        
+        Messagebox.show("Creating academic session "+termname, "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
+        
+        if (cmAdmin != null) {
+        if (startdate != null && enddate != null && termname != null ) {
+            try {
+            //cmAdmin.createAcademicSession("as1", "academic session 1", "an academic session", new Date(), new Date());
+            cmAdmin.createAcademicSession(termname,termname,termname,startdate,enddate);
+            }
+            catch (Exception e) {
+            Messagebox.show(e.toString(), "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
+            }
+            finally {
+            populateTerms();
+            }
+        }
+        else {
+            Messagebox.show("Please enter all field values!", "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
+        }
+        }
+        else {
+        Messagebox.show("cmAdmin is not defined", "Warning", Messagebox.OK, Messagebox.EXCLAMATION); 
+        }
+    }
 
     ]]>
     </zscript>
     <style>
-	.codeblock {
-	 overflow-x: scroll;
-	 height:600px;
-	 overflow-y:scroll;
-	}
+    .codeblock {
+     overflow-x: scroll;
+     height:600px;
+     overflow-y:scroll;
+    }
     </style>
     <!--
     <timer id="timer" delay="5000" repeats="true"
-	onTimer="onTimer()"/>
+    onTimer="onTimer()"/>
     -->
 
 <vbox>
     <hbox>
-	<label>Currently defined terms:</label>
-	<listbox id="termbox" onSelect='termChanged()' rows="5"/>
+    <label>Currently defined terms:</label>
+    <listbox id="termbox" onSelect='termChanged()' rows="5"/>
     </hbox>
 
     <hbox>New Name: <textbox id="newname"/> Start Date:
@@ -238,16 +238,16 @@
     <separator bar="true"/>
     <hbox>
     Termname: <textbox id="addtermname"/>
-	<hbox>Start Date:
-	<datebox id="addstartdate"/>
-	End Date:
-	<datebox id="addenddate"/>
-	<button id="Add" onClick="termAdd()" label="Add new Term"/> 
-	</hbox>
+    <hbox>Start Date:
+    <datebox id="addstartdate"/>
+    End Date:
+    <datebox id="addenddate"/>
+    <button id="Add" onClick="termAdd()" label="Add new Term"/> 
+    </hbox>
     </hbox>
     <zscript>
     <![CDATA[
-	//Same as 'onLoad'
+    //Same as 'onLoad'
         doInit();
     ]]>
     </zscript>
